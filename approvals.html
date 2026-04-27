@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Approvals — LeaveFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-leaf"></i></div>
+    <div class="logo-text">Leave<span>Flow</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span> Dashboard</a>
+    <a href="apply-leave.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span> Apply Leave</a>
+    <a href="my-leaves.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> My Leaves</a>
+    <a href="leave-calendar.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span> Calendar</a>
+    <div class="nav-section-title">Manager</div>
+    <a href="approvals.html" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span> Approvals <span class="nav-badge" id="pendingBadge">3</span></a>
+    <a href="team-overview.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users"></i></span> Team Overview</a>
+    <div class="nav-section-title">Admin</div>
+    <a href="#" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-sliders"></i></span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">SL</div>
+      <div class="user-info"><div class="user-name">Sam Lee</div><div class="user-role">Engineering Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Leave Approvals</h1><p>Review and respond to team leave requests</p></div>
+    <div class="topbar-right">
+      <button class="icon-btn"><i class="fa-solid fa-bell"></i><span class="notif-dot"></span></button>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Stats -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="stat-info"><div class="stat-value" id="statPending">3</div><div class="stat-label">Awaiting Review</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info"><div class="stat-value">14</div><div class="stat-label">Approved (YTD)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="stat-info"><div class="stat-value">2</div><div class="stat-label">Rejected (YTD)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-info"><div class="stat-value">6</div><div class="stat-label">Team Members</div></div>
+      </div>
+    </div>
+
+    <!-- Pending Requests -->
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2><span style="color:var(--warning);margin-right:6px;">⏳</span> Pending Approvals</h2>
+        <span class="text-muted text-sm" id="pendingCount">3 requests need your attention</span>
+      </div>
+      <div id="pendingList"></div>
+    </div>
+
+    <!-- Processed Requests -->
+    <div class="card">
+      <div class="card-header"><h2>Recently Processed</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Leave Type</th>
+              <th>Period</th>
+              <th>Days</th>
+              <th>Decision</th>
+              <th>Decided On</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="flex items-center gap-2"><div class="user-avatar" style="width:28px;height:28px;font-size:.7rem;">CR</div><span>Carlos Rivera</span></div></td>
+              <td>Annual Leave</td><td>04–05 May 2026</td><td>2</td>
+              <td><span class="badge badge-approved">Approved</span></td><td>11 Apr 2026</td>
+            </tr>
+            <tr>
+              <td><div class="flex items-center gap-2"><div class="user-avatar" style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,#f97316,#e85f00);">AK</div><span>Aisha Khan</span></div></td>
+              <td>Sick Leave</td><td>08 Apr 2026</td><td>1</td>
+              <td><span class="badge badge-approved">Approved</span></td><td>08 Apr 2026</td>
+            </tr>
+            <tr>
+              <td><div class="flex items-center gap-2"><div class="user-avatar" style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,#06b6d4,#0891b2);">PN</div><span>Priya Nair</span></div></td>
+              <td>Casual Leave</td><td>05 Apr 2026</td><td>1</td>
+              <td><span class="badge badge-rejected">Rejected</span></td><td>04 Apr 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Decision Modal -->
+<div class="modal-overlay" id="decisionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Review Leave Request</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalDetails" style="background:var(--surface-2);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;font-size:.875rem;"></div>
+      <div class="form-group">
+        <label class="form-label">Comments / Reason</label>
+        <textarea class="form-control" id="managerComment" placeholder="Optional: Add a note for the employee…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="rejectBtn" onclick="decide('rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+      <button class="btn btn-success" id="approveBtn" onclick="decide('approved')"><i class="fa-solid fa-check"></i> Approve</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+let requests = [
+  { id:'LV-025', name:'Jamie Doe', initials:'JD', type:'Sick Leave',   from:'28 Apr 2026', to:'28 Apr 2026', days:1, reason:'Not feeling well', applied:'12 Apr 2026' },
+  { id:'LV-031', name:'Sam Wong',  initials:'SW', type:'Annual Leave',  from:'02 May 2026', to:'09 May 2026', days:6, reason:'Family holiday',   applied:'10 Apr 2026', gradient:'135deg,#8b5cf6,#7c3aed' },
+  { id:'LV-032', name:'Priya Nair',initials:'PN', type:'Casual Leave',  from:'22 Apr 2026', to:'22 Apr 2026', days:1, reason:'Bank appointment', applied:'11 Apr 2026', gradient:'135deg,#06b6d4,#0891b2' },
+];
+
+let activeId = null;
+
+function renderPending() {
+  const list = document.getElementById('pendingList');
+  if (!requests.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-circle-check"></i></div><p>All caught up!</p><span>No pending leave requests.</span></div>`;
+    document.getElementById('pendingCount').textContent = 'No requests pending';
+    document.getElementById('statPending').textContent = '0';
+    document.getElementById('pendingBadge').textContent = '0';
+    return;
+  }
+  document.getElementById('pendingCount').textContent = requests.length + ' request' + (requests.length > 1 ? 's' : '') + ' need your attention';
+  document.getElementById('statPending').textContent = requests.length;
+  document.getElementById('pendingBadge').textContent = requests.length;
+
+  list.innerHTML = requests.map(r => `
+    <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div class="user-avatar" style="width:40px;height:40px;font-size:.85rem;flex-shrink:0;${r.gradient?'background:linear-gradient('+r.gradient+')':''}">${r.initials}</div>
+      <div style="flex:1;">
+        <div class="flex items-center gap-2 mb-1">
+          <span style="font-weight:700;">${r.name}</span>
+          <span class="badge badge-pending">Pending</span>
+          <span class="badge badge-blue">${r.type}</span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text-muted);">
+          <i class="fa-regular fa-calendar"></i> ${r.from} → ${r.to} &nbsp;·&nbsp; <strong>${r.days} day${r.days>1?'s':''}</strong> &nbsp;·&nbsp; "${r.reason}"
+        </p>
+        <p style="font-size:.75rem;color:var(--text-light);margin-top:3px;">Applied: ${r.applied} &nbsp;·&nbsp; Ref: ${r.id}</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-success btn-sm" onclick="quickDecide('${r.id}','approved')"><i class="fa-solid fa-check"></i> Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="quickDecide('${r.id}','rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('${r.id}')"><i class="fa-solid fa-eye"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openModal(id) {
+  activeId = id;
+  const r = requests.find(x => x.id === id);
+  document.getElementById('modalTitle').textContent = 'Review: ' + r.name + ' — ' + r.type;
+  document.getElementById('modalDetails').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div><span class="text-muted text-sm">Employee</span><p class="font-bold">${r.name}</p></div>
+      <div><span class="text-muted text-sm">Leave Type</span><p class="font-bold">${r.type}</p></div>
+      <div><span class="text-muted text-sm">From</span><p class="font-bold">${r.from}</p></div>
+      <div><span class="text-muted text-sm">To</span><p class="font-bold">${r.to}</p></div>
+      <div><span class="text-muted text-sm">Total Days</span><p class="font-bold">${r.days}</p></div>
+      <div><span class="text-muted text-sm">Reference</span><p class="font-bold">${r.id}</p></div>
+    </div>
+    <div style="margin-top:10px;"><span class="text-muted text-sm">Reason</span><p class="font-bold">${r.reason}</p></div>
+  `;
+  document.getElementById('managerComment').value = '';
+  document.getElementById('decisionModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('decisionModal').classList.remove('open'); }
+
+function quickDecide(id, decision) {
+  activeId = id;
+  decide(decision);
+}
+
+function decide(decision) {
+  requests = requests.filter(r => r.id !== activeId);
+  renderPending();
+  closeModal();
+  showToast(decision === 'approved'
+    ? '✅ Leave request approved and employee notified.'
+    : '❌ Leave request rejected and employee notified.', decision === 'approved' ? 'success' : 'danger');
+}
+
+function showToast(msg, type='success') {
+  const tc = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = msg;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+renderPending();
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply Leave — LeaveFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-leaf"></i></div>
+    <div class="logo-text">Leave<span>Flow</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span> Dashboard
+    </a>
+    <a href="apply-leave.html" class="nav-item active">
+      <span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span> Apply Leave
+    </a>
+    <a href="my-leaves.html" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> My Leaves
+    </a>
+    <a href="leave-calendar.html" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span> Calendar
+    </a>
+    <div class="nav-section-title">Manager</div>
+    <a href="approvals.html" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span> Approvals
+      <span class="nav-badge">3</span>
+    </a>
+    <a href="team-overview.html" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-users"></i></span> Team Overview
+    </a>
+    <div class="nav-section-title">Admin</div>
+    <a href="#" class="nav-item">
+      <span class="nav-icon"><i class="fa-solid fa-sliders"></i></span> Settings
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">JD</div>
+      <div class="user-info">
+        <div class="user-name">Jamie Doe</div>
+        <div class="user-role">Product Manager</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Apply for Leave</h1>
+      <p>Submit a new leave request</p>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn"><i class="fa-solid fa-bell"></i><span class="notif-dot"></span></button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div style="max-width:800px;">
+
+      <div class="grid grid-2" style="margin-bottom:24px;">
+        <!-- Balance quick-look cards -->
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fa-solid fa-sun"></i></div>
+          <div class="stat-info">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Annual Days Left</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fa-solid fa-kit-medical"></i></div>
+          <div class="stat-info">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Sick Days Left</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Form -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-paper-plane" style="color:var(--primary);margin-right:8px;"></i>Leave Application Form</h2>
+          <span class="text-muted text-sm">All fields marked * are required</span>
+        </div>
+        <div class="card-body">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Leave Type *</label>
+              <select class="form-control" id="leaveType" onchange="updateBalance()">
+                <option value="">— Select Type —</option>
+                <option value="annual">Annual Leave</option>
+                <option value="sick">Sick Leave</option>
+                <option value="casual">Casual Leave</option>
+                <option value="maternity">Maternity Leave</option>
+                <option value="paternity">Paternity Leave</option>
+                <option value="unpaid">Unpaid Leave</option>
+              </select>
+            </div>
+            <div class="form-group" id="balanceDisplay" style="display:none;">
+              <label class="form-label">Available Balance</label>
+              <div id="balanceValue" style="padding:10px 14px;background:var(--primary-light);border-radius:var(--radius-sm);font-weight:700;color:var(--primary);font-size:.95rem;">—</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start Date *</label>
+              <input type="date" class="form-control" id="startDate" onchange="calcDays()" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date *</label>
+              <input type="date" class="form-control" id="endDate" onchange="calcDays()" />
+            </div>
+          </div>
+
+          <!-- Days summary pill -->
+          <div id="daysSummary" style="display:none;margin-bottom:18px;">
+            <div style="display:inline-flex;align-items:center;gap:10px;background:var(--success-light);color:#15803d;padding:10px 16px;border-radius:var(--radius-sm);font-weight:700;font-size:.9rem;">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span id="daysCount">0 working days selected</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Half Day?</label>
+              <select class="form-control">
+                <option value="no">No — Full Day(s)</option>
+                <option value="first">First Half Only</option>
+                <option value="second">Second Half Only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Approving Manager *</label>
+              <select class="form-control">
+                <option value="">— Select Manager —</option>
+                <option value="sam">Sam Lee</option>
+                <option value="priya">Priya Nair</option>
+                <option value="david">David Okonkwo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Reason / Notes *</label>
+            <textarea class="form-control" id="reason" placeholder="Briefly describe the reason for your leave…"></textarea>
+            <div class="form-hint">Be clear and concise. Avoid including sensitive health details if not required.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Supporting Document (optional)</label>
+            <div style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:28px;text-align:center;cursor:pointer;transition:var(--transition);" onmouseenter="this.style.borderColor='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)'">
+              <div style="font-size:2rem;color:var(--text-light);margin-bottom:8px;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <p style="font-weight:700;font-size:.875rem;">Drag & drop file here, or <span style="color:var(--primary);">browse</span></p>
+              <p class="text-muted text-sm mt-2">PDF, JPG, PNG — max 5 MB</p>
+              <input type="file" style="display:none;" />
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <div class="flex gap-3" style="justify-content:flex-end;">
+            <button class="btn btn-ghost" onclick="resetForm()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+            <a href="my-leaves.html" class="btn btn-ghost">Cancel</a>
+            <button class="btn btn-primary" onclick="submitForm()"><i class="fa-solid fa-paper-plane"></i> Submit Request</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Policy reminder -->
+      <div style="margin-top:20px;background:var(--accent-light);border-left:4px solid var(--accent);border-radius:var(--radius-sm);padding:14px 18px;font-size:.85rem;">
+        <strong style="color:var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> Leave Policy Reminder</strong>
+        <p style="margin-top:6px;color:var(--text-muted);">Annual leave requests must be submitted at least <strong>5 working days</strong> in advance. Sick leave may be applied retroactively with supporting documentation. Leave requests submitted during a notice period will be reviewed case by case.</p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  const balances = { annual: 12, sick: 8, casual: 2, maternity: 0, paternity: 0, unpaid: 999 };
+
+  function updateBalance() {
+    const type = document.getElementById('leaveType').value;
+    const display = document.getElementById('balanceDisplay');
+    const val = document.getElementById('balanceValue');
+    if (type && balances[type] !== undefined) {
+      display.style.display = 'block';
+      const b = balances[type];
+      val.textContent = b === 999 ? 'Unlimited (unpaid)' : b + ' days available';
+      val.style.color = b > 5 ? 'var(--success)' : b > 0 ? 'var(--warning)' : 'var(--danger)';
+      val.style.background = b > 5 ? 'var(--success-light)' : b > 0 ? 'var(--warning-light)' : 'var(--danger-light)';
+    } else {
+      display.style.display = 'none';
+    }
+  }
+
+  function calcDays() {
+    const s = document.getElementById('startDate').value;
+    const e = document.getElementById('endDate').value;
+    const summary = document.getElementById('daysSummary');
+    if (s && e) {
+      const start = new Date(s), end = new Date(e);
+      let days = 0;
+      const cur = new Date(start);
+      while (cur <= end) { const d = cur.getDay(); if (d !== 0 && d !== 6) days++; cur.setDate(cur.getDate()+1); }
+      summary.style.display = 'block';
+      document.getElementById('daysCount').textContent = days + (days === 1 ? ' working day selected' : ' working days selected');
+    } else { summary.style.display = 'none'; }
+  }
+
+  function resetForm() {
+    document.getElementById('leaveType').value = '';
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    document.getElementById('reason').value = '';
+    document.getElementById('balanceDisplay').style.display = 'none';
+    document.getElementById('daysSummary').style.display = 'none';
+  }
+
+  function showToast(msg, type='success') {
+    const tc = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.innerHTML = `<i class="fa-solid fa-${type==='success'?'circle-check':'circle-xmark'}"></i> ${msg}`;
+    tc.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  function submitForm() {
+    const type = document.getElementById('leaveType').value;
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    const reason = document.getElementById('reason').value.trim();
+    if (!type || !start || !end || !reason) { showToast('Please fill in all required fields.', 'danger'); return; }
+    if (new Date(end) < new Date(start)) { showToast('End date cannot be before start date.', 'danger'); return; }
+    showToast('Leave request submitted successfully! 🎉', 'success');
+    setTimeout(() => { window.location.href = 'my-leaves.html'; }, 2000);
+  }
+</script>
+</body>
+</html>
