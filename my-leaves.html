@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Leaves — LeaveFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-leaf"></i></div>
+    <div class="logo-text">Leave<span>Flow</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span> Dashboard</a>
+    <a href="apply-leave.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span> Apply Leave</a>
+    <a href="my-leaves.html" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> My Leaves</a>
+    <a href="leave-calendar.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span> Calendar</a>
+    <div class="nav-section-title">Manager</div>
+    <a href="approvals.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span> Approvals <span class="nav-badge">3</span></a>
+    <a href="team-overview.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users"></i></span> Team Overview</a>
+    <div class="nav-section-title">Admin</div>
+    <a href="#" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-sliders"></i></span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">JD</div>
+      <div class="user-info"><div class="user-name">Jamie Doe</div><div class="user-role">Product Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-left"><h1>My Leave Requests</h1><p>Track and manage your leave applications</p></div>
+    <div class="topbar-right">
+      <button class="icon-btn"><i class="fa-solid fa-bell"></i><span class="notif-dot"></span></button>
+      <a href="apply-leave.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> New Request</a>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Stats row -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-list-check"></i></div>
+        <div class="stat-info"><div class="stat-value">11</div><div class="stat-label">Total Requests</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="stat-info"><div class="stat-value">2</div><div class="stat-label">Pending</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info"><div class="stat-value">8</div><div class="stat-label">Approved</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="stat-info"><div class="stat-value">1</div><div class="stat-label">Rejected</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs + Table -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Leave History</h2>
+        <div class="flex gap-3 items-center">
+          <div class="search-box">
+            <span><i class="fa-solid fa-search"></i></span>
+            <input type="text" placeholder="Search requests…" oninput="filterTable(this.value)" />
+          </div>
+          <select class="form-control" style="width:auto;padding:8px 32px 8px 12px;" onchange="filterByStatus(this.value)">
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="padding:0 20px;">
+        <div class="tabs" id="yearTabs">
+          <button class="tab-btn active" onclick="switchYear('2026',this)">2026</button>
+          <button class="tab-btn" onclick="switchYear('2025',this)">2025</button>
+          <button class="tab-btn" onclick="switchYear('2024',this)">2024</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="leaveTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Leave Type</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Days</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Applied On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Cancel confirmation modal -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Cancel Leave Request</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.9rem;color:var(--text-muted);">Are you sure you want to cancel this leave request? This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Keep Request</button>
+      <button class="btn btn-danger" onclick="confirmCancel()"><i class="fa-solid fa-trash"></i> Yes, Cancel It</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const data2026 = [
+  { id:'LV-026', type:'Annual Leave', from:'20 Apr 2026', to:'23 Apr 2026', days:4, reason:'Family trip', status:'Approved',  applied:'10 Apr 2026' },
+  { id:'LV-025', type:'Sick Leave',   from:'28 Apr 2026', to:'28 Apr 2026', days:1, reason:'Not feeling well', status:'Pending', applied:'12 Apr 2026' },
+  { id:'LV-024', type:'Casual Leave', from:'15 Mar 2026', to:'15 Mar 2026', days:1, reason:'Personal errand', status:'Rejected', applied:'13 Mar 2026' },
+  { id:'LV-023', type:'Annual Leave', from:'03 Feb 2026', to:'07 Feb 2026', days:5, reason:'Holiday', status:'Approved',  applied:'01 Feb 2026' },
+  { id:'LV-022', type:'Sick Leave',   from:'18 Jan 2026', to:'19 Jan 2026', days:2, reason:'Flu', status:'Approved',   applied:'17 Jan 2026' },
+];
+const data2025 = [
+  { id:'LV-021', type:'Annual Leave', from:'22 Dec 2025', to:'02 Jan 2026', days:10, reason:'Year-end break', status:'Approved', applied:'10 Dec 2025' },
+  { id:'LV-020', type:'Casual Leave', from:'11 Nov 2025', to:'11 Nov 2025', days:1, reason:'Car servicing', status:'Approved', applied:'09 Nov 2025' },
+  { id:'LV-019', type:'Sick Leave',   from:'05 Sep 2025', to:'06 Sep 2025', days:2, reason:'Medical appointment', status:'Approved', applied:'04 Sep 2025' },
+];
+const data2024 = [
+  { id:'LV-018', type:'Annual Leave', from:'14 Jul 2024', to:'19 Jul 2024', days:6, reason:'Vacation', status:'Approved', applied:'01 Jul 2024' },
+  { id:'LV-017', type:'Sick Leave',   from:'03 Mar 2024', to:'03 Mar 2024', days:1, reason:'Cold', status:'Approved', applied:'03 Mar 2024' },
+];
+
+let currentData = [...data2026];
+let pendingCancelId = null;
+
+const statusClass = { Pending:'badge-pending', Approved:'badge-approved', Rejected:'badge-rejected' };
+
+function renderTable(rows) {
+  const tbody = document.getElementById('tableBody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-calendar-xmark"></i></div><p>No leave requests found</p><span>Try adjusting your filters</span></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td><span style="font-weight:700;color:var(--primary);">${r.id}</span></td>
+      <td><span class="badge badge-blue">${r.type}</span></td>
+      <td>${r.from}</td>
+      <td>${r.to}</td>
+      <td><strong>${r.days}</strong></td>
+      <td style="max-width:160px;color:var(--text-muted);">${r.reason}</td>
+      <td><span class="badge ${statusClass[r.status]}">${r.status}</span></td>
+      <td>${r.applied}</td>
+      <td>
+        <div class="flex gap-2">
+          ${r.status === 'Pending' ? `<button class="btn btn-danger btn-sm" onclick="openCancel('${r.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-eye"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function switchYear(year, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentData = year === '2026' ? [...data2026] : year === '2025' ? [...data2025] : [...data2024];
+  renderTable(currentData);
+}
+
+function filterTable(q) {
+  const filtered = currentData.filter(r => JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
+  renderTable(filtered);
+}
+
+function filterByStatus(status) {
+  const filtered = status ? currentData.filter(r => r.status === status) : currentData;
+  renderTable(filtered);
+}
+
+function openCancel(id) { pendingCancelId = id; document.getElementById('cancelModal').classList.add('open'); }
+function closeModal() { document.getElementById('cancelModal').classList.remove('open'); }
+function confirmCancel() {
+  currentData = currentData.filter(r => r.id !== pendingCancelId);
+  renderTable(currentData);
+  closeModal();
+  showToast('Request cancelled successfully.', 'success');
+}
+
+function showToast(msg, type='success') {
+  const tc = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+renderTable(currentData);
+</script>
+</body>
+</html>
