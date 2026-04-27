@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Overview — LeaveFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-leaf"></i></div>
+    <div class="logo-text">Leave<span>Flow</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gauge-high"></i></span> Dashboard</a>
+    <a href="apply-leave.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span> Apply Leave</a>
+    <a href="my-leaves.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span> My Leaves</a>
+    <a href="leave-calendar.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span> Calendar</a>
+    <div class="nav-section-title">Manager</div>
+    <a href="approvals.html" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span> Approvals <span class="nav-badge">3</span></a>
+    <a href="team-overview.html" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-users"></i></span> Team Overview</a>
+    <div class="nav-section-title">Admin</div>
+    <a href="#" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-sliders"></i></span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">SL</div>
+      <div class="user-info"><div class="user-name">Sam Lee</div><div class="user-role">Engineering Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Team Overview</h1><p>Leave summary and availability for your team</p></div>
+    <div class="topbar-right">
+      <button class="icon-btn"><i class="fa-solid fa-bell"></i><span class="notif-dot"></span></button>
+      <div class="search-box">
+        <span><i class="fa-solid fa-search"></i></span>
+        <input type="text" placeholder="Search team…" oninput="filterMembers(this.value)" />
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Summary stats -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-info"><div class="stat-value">6</div><div class="stat-label">Team Members</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-dot"></i></div>
+        <div class="stat-info"><div class="stat-value">4</div><div class="stat-label">In Office Today</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-umbrella-beach"></i></div>
+        <div class="stat-info"><div class="stat-value">2</div><div class="stat-label">On Leave Today</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="stat-info"><div class="stat-value">3</div><div class="stat-label">Pending Requests</div></div>
+      </div>
+    </div>
+
+    <!-- Team cards -->
+    <div class="grid grid-3" id="teamGrid"></div>
+
+    <!-- Dept leave usage table -->
+    <div class="card mt-6">
+      <div class="card-header">
+        <h2>Team Leave Utilisation — 2026</h2>
+        <span class="badge badge-blue">YTD April 2026</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Annual Used</th>
+              <th>Annual Left</th>
+              <th>Sick Used</th>
+              <th>Casual Used</th>
+              <th>Total Taken</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="usageTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const team = [
+  { initials:'JD', name:'Jamie Doe',    role:'Product Manager',    status:'on-leave',  leaveType:'Annual Leave', annualUsed:8, annualTotal:20, sickUsed:2, casualUsed:1, gradient:'135deg,#4f6ef7,#3451d1' },
+  { initials:'SW', name:'Sam Wong',     role:'Frontend Developer', status:'in-office', leaveType:null,           annualUsed:5, annualTotal:20, sickUsed:0, casualUsed:2, gradient:'135deg,#8b5cf6,#7c3aed' },
+  { initials:'PN', name:'Priya Nair',   role:'Backend Developer',  status:'on-leave',  leaveType:'Sick Leave',   annualUsed:3, annualTotal:20, sickUsed:4, casualUsed:0, gradient:'135deg,#06b6d4,#0891b2' },
+  { initials:'CR', name:'Carlos Rivera',role:'QA Engineer',        status:'in-office', leaveType:null,           annualUsed:2, annualTotal:20, sickUsed:1, casualUsed:3, gradient:'135deg,#f97316,#e85f00' },
+  { initials:'AK', name:'Aisha Khan',   role:'DevOps Engineer',    status:'in-office', leaveType:null,           annualUsed:10,annualTotal:20, sickUsed:3, casualUsed:2, gradient:'135deg,#ec4899,#db2777' },
+  { initials:'LM', name:'Leo Martins',  role:'Designer',           status:'in-office', leaveType:null,           annualUsed:6, annualTotal:20, sickUsed:0, casualUsed:4, gradient:'135deg,#22c55e,#16a34a' },
+];
+
+let filtered = [...team];
+
+function renderTeam(list) {
+  const grid = document.getElementById('teamGrid');
+  grid.innerHTML = list.map(m => {
+    const left = m.annualTotal - m.annualUsed;
+    const pct = Math.round((m.annualUsed / m.annualTotal) * 100);
+    const isLeave = m.status === 'on-leave';
+    return `
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="height:6px;background:linear-gradient(${m.gradient});"></div>
+      <div style="padding:20px;">
+        <div class="flex items-center gap-12 mb-4" style="gap:12px;">
+          <div class="user-avatar" style="width:46px;height:46px;font-size:.95rem;background:linear-gradient(${m.gradient});">${m.initials}</div>
+          <div style="flex:1;">
+            <p style="font-weight:700;font-size:.95rem;">${m.name}</p>
+            <p style="font-size:.78rem;color:var(--text-muted);">${m.role}</p>
+          </div>
+          <div>
+            ${isLeave
+              ? `<span class="badge badge-taken"><i class="fa-solid fa-umbrella-beach"></i> On Leave</span>`
+              : `<span class="badge badge-approved"><i class="fa-solid fa-circle-dot"></i> In Office</span>`}
+          </div>
+        </div>
+        ${isLeave ? `<div style="background:var(--info-light);border-radius:var(--radius-sm);padding:6px 10px;font-size:.78rem;font-weight:700;color:var(--info);margin-bottom:12px;"><i class="fa-solid fa-info-circle"></i> Currently on: ${m.leaveType}</div>` : ''}
+        <div style="margin-bottom:8px;">
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-bold">Annual Leave Used</span>
+            <span class="text-sm text-muted">${m.annualUsed} / ${m.annualTotal} days</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill ${pct>80?'red':pct>50?'orange':'blue'}" style="width:${pct}%"></div></div>
+        </div>
+        <div class="flex gap-3 mt-3" style="font-size:.78rem;">
+          <div style="flex:1;text-align:center;background:var(--success-light);border-radius:6px;padding:6px;">
+            <div style="font-weight:800;color:var(--success);font-size:1rem;">${left}</div>
+            <div style="color:#15803d;font-weight:600;">Days Left</div>
+          </div>
+          <div style="flex:1;text-align:center;background:var(--danger-light);border-radius:6px;padding:6px;">
+            <div style="font-weight:800;color:var(--danger);font-size:1rem;">${m.sickUsed}</div>
+            <div style="color:#b91c1c;font-weight:600;">Sick Used</div>
+          </div>
+          <div style="flex:1;text-align:center;background:var(--warning-light);border-radius:6px;padding:6px;">
+            <div style="font-weight:800;color:var(--warning);font-size:1rem;">${m.casualUsed}</div>
+            <div style="color:#854d0e;font-weight:600;">Casual Used</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable(list) {
+  const tbody = document.getElementById('usageTable');
+  tbody.innerHTML = list.map(m => {
+    const left = m.annualTotal - m.annualUsed;
+    const total = m.annualUsed + m.sickUsed + m.casualUsed;
+    const risk = m.annualUsed / m.annualTotal > 0.7;
+    return `
+    <tr>
+      <td>
+        <div class="flex items-center gap-2">
+          <div class="user-avatar" style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(${m.gradient});">${m.initials}</div>
+          <div>
+            <p style="font-weight:700;font-size:.875rem;">${m.name}</p>
+            <p style="font-size:.72rem;color:var(--text-muted);">${m.role}</p>
+          </div>
+        </div>
+      </td>
+      <td><strong>${m.annualUsed}</strong> / ${m.annualTotal}</td>
+      <td><strong style="color:${left<5?'var(--danger)':'var(--success)'};">${left}</strong></td>
+      <td>${m.sickUsed}</td>
+      <td>${m.casualUsed}</td>
+      <td><strong>${total}</strong></td>
+      <td>${risk ? '<span class="badge badge-pending">⚠ High Usage</span>' : '<span class="badge badge-approved">Normal</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMembers(q) {
+  filtered = team.filter(m => m.name.toLowerCase().includes(q.toLowerCase()) || m.role.toLowerCase().includes(q.toLowerCase()));
+  renderTeam(filtered);
+  renderTable(filtered);
+}
+
+renderTeam(team);
+renderTable(team);
+</script>
+</body>
+</html>
